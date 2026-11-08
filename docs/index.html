@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ведомость по товарам на складах — демо-отчёт на СКД (1С 8.3.10)</title>
+<meta name="description" content="Демонстрационный отчёт 1С на СКД: ведомость по товарам на складах с контролем периода. Код в строгом стиле, чекер правил оформления, интерфейс 8.3.10 «Такси».">
+<style>
+	:root {
+		--ink: #1a1a1a;
+		--muted: #5f6368;
+		--line: #c9c9c9;
+		--soft: #f0f0f0;
+		--panel: #f6f6f6;
+		--accent: #2b6cb0;
+		--neg: #c00000;
+	}
+	* { box-sizing: border-box; }
+	body {
+		margin: 0;
+		background: #ffffff;
+		color: var(--ink);
+		font: 15px/1.6 "Segoe UI", Tahoma, Arial, sans-serif;
+		-webkit-font-smoothing: antialiased;
+	}
+	a { color: var(--accent); text-decoration: none; }
+	a:hover { text-decoration: underline; }
+	.wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+
+	header.top {
+		background: linear-gradient(#fbfbfb, #ebebeb);
+		border-bottom: 1px solid var(--line);
+		position: sticky; top: 0; z-index: 10;
+	}
+	header.top .wrap { display: flex; align-items: center; gap: 18px; height: 52px; }
+	.logo { display: flex; align-items: center; gap: 9px; font-weight: 600; white-space: nowrap; }
+	.logo i { width: 20px; height: 20px; background: #ffe9a8; border: 1px solid #b9b9b9; border-radius: 3px; display: inline-block; }
+	nav { margin-left: auto; display: flex; gap: 16px; font-size: 14px; flex-wrap: wrap; }
+	nav a { color: #333; }
+
+	.hero { padding: 46px 0 34px; border-bottom: 1px solid #e6e6e6; }
+	.hero h1 { font-size: 30px; line-height: 1.25; margin: 0 0 10px; font-weight: 600; }
+	.hero p.lead { font-size: 17px; color: var(--muted); margin: 0 0 22px; max-width: 760px; }
+	.badges { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 22px; }
+	.badge {
+		font-size: 12.5px; padding: 3px 10px; border: 1px solid var(--line);
+		border-radius: 2px; background: #fdfdfd; color: #444;
+	}
+	.actions { display: flex; gap: 10px; flex-wrap: wrap; }
+	.btn {
+		display: inline-flex; align-items: center; height: 36px; padding: 0 16px;
+		border: 1px solid #bfbfbf; border-radius: 2px;
+		background: linear-gradient(#fdfdfd, #ebebeb); color: #1a1a1a; font-size: 14px;
+	}
+	.btn.primary { background: linear-gradient(#f7fbff, #e3eef9); border-color: #9dc3e6; }
+
+	h2 { font-size: 21px; font-weight: 600; margin: 44px 0 14px; }
+	h2 .num { color: #a0a0a0; font-weight: 400; margin-right: 8px; }
+	p.note { color: var(--muted); font-size: 14px; margin: 0 0 18px; }
+
+	.shot { border: 1px solid var(--line); border-radius: 3px; overflow: hidden; background: #fff; margin: 0 0 10px; }
+	.shot img { display: block; width: 100%; height: auto; }
+	.caption { font-size: 13px; color: var(--muted); margin: 0 0 26px; }
+
+	.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+	.card {
+		border: 1px solid var(--line); border-radius: 3px; padding: 16px 18px; background: #fff;
+	}
+	.card h3 { margin: 0 0 6px; font-size: 15px; font-weight: 600; }
+	.card p { margin: 0; font-size: 13.5px; color: var(--muted); }
+	.card code { font-size: 12.5px; }
+
+	pre {
+		margin: 0 0 20px; padding: 14px 16px; overflow: auto;
+		background: #fbfbfb; border: 1px solid #e0e0e0; border-radius: 3px;
+		font: 13px/1.55 Consolas, "Courier New", monospace; color: #222;
+	}
+	pre .c { color: #6a737d; }
+	pre .k { color: #0033b3; }
+	pre .s { color: #a31515; }
+
+	table.rules { width: 100%; border-collapse: collapse; font-size: 14px; }
+	table.rules td, table.rules th { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
+	table.rules th { background: var(--panel); font-weight: 600; }
+
+	ol.steps { padding-left: 22px; font-size: 14.5px; }
+	ol.steps li { margin-bottom: 8px; }
+
+	footer {
+		margin-top: 52px; border-top: 1px solid var(--line);
+		background: var(--panel); padding: 22px 0; font-size: 13.5px; color: var(--muted);
+	}
+	footer .wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+	footer .sp { margin-left: auto; }
+</style>
+</head>
+<body>
+
+<header class="top">
+	<div class="wrap">
+		<span class="logo"><i></i>Ведомость по товарам на складах</span>
+		<nav>
+			<a href="#shots">Скрины</a>
+			<a href="#inside">Что внутри</a>
+			<a href="#style">Стиль кода</a>
+			<a href="#build">Сборка</a>
+			<a href="https://github.com/kepanasyuke/1c-report-demo">GitHub</a>
+		</nav>
+	</div>
+</header>
+
+<main class="wrap">
+
+	<section class="hero">
+		<h1>Демо-отчёт на СКД для технического собеседования</h1>
+		<p class="lead">
+			Ведомость по товарам на складах: начальный остаток, приход, расход, конечный остаток
+			и контрольная колонка, которая обязана быть нулевой. Оформление — интерфейс
+			1С 8.3.10 «Такси», код — один выход из функции и тело в одну-две инструкции.
+		</p>
+		<div class="badges">
+			<span class="badge">1С:Предприятие 8.3</span>
+			<span class="badge">СКД</span>
+			<span class="badge">ТоварыНаСкладах.ОстаткиИОбороты</span>
+			<span class="badge">Интерфейс «Такси»</span>
+			<span class="badge">Строгий стиль кода</span>
+		</div>
+		<div class="actions">
+			<a class="btn primary" href="#shots">Смотреть скрины</a>
+			<a class="btn" href="https://github.com/kepanasyuke/1c-report-demo">Открыть репозиторий</a>
+			<a class="btn" href="https://github.com/kepanasyuke/1c-report-demo/blob/master/src/%D0%9C%D0%BE%D0%B4%D1%83%D0%BB%D1%8C%D0%9E%D0%B1%D1%8A%D0%B5%D0%BA%D1%82%D0%B0.bsl">Код модуля</a>
+		</div>
+	</section>
+
+	<h2 id="shots"><span class="num">01</span>Как это выглядит</h2>
+	<p class="note">
+		Макеты интерфейса 8.3.10 «Такси»: плоские кнопки командной панели, серая шапка,
+		тонкие рамки таблицы 1 px, жирные строки группировок и итогов, минусовой остаток — красным.
+		Данные вымышленные: это макет, а не снимок живой базы.
+	</p>
+
+	<div class="shot"><img src="screens/01-otchet-taksi-8-3-10.png" alt="Сформированный отчёт в интерфейсе 1С 8.3.10 Такси"></div>
+	<p class="caption">Сформированный отчёт: группировки «Склад → Номенклатура → Характеристика», итоги по складам и общий.</p>
+
+	<div class="shot"><img src="screens/02-nastroyki-taksi-8-3-10.png" alt="Панель настроек СКД: структура, отбор, параметры периода"></div>
+	<p class="caption">Панель «Настройки»: структура группировок, отбор по складу, параметры периода.</p>
+
+	<h2 id="inside"><span class="num">02</span>Что внутри</h2>
+	<div class="grid">
+		<div class="card">
+			<h3>Запрос</h3>
+			<p>Одно обращение к <code>ОстаткиИОбороты</code> вместо двух к <code>Остатки</code>, фильтр по нулевым строкам в <code>ГДЕ</code>, отборы — в настройках СКД, ни одного обращения через точку.</p>
+		</div>
+		<div class="card">
+			<h3>Схема</h3>
+			<p>Четыре ресурса через <code>Сумма()</code>, вычисляемое поле <code>Контроль</code>, параметры периода, условное оформление отрицательного остатка.</p>
+		</div>
+		<div class="card">
+			<h3>Модуль</h3>
+			<p>Ручная компоновка: <code>КомпоновщикМакетаКомпоновкиДанных</code> → <code>ПроцессорКомпоновкиДанных</code> → <code>РезультатКомпоновкиДанных.Вывести()</code>, подстановка текущего месяца.</p>
+		</div>
+		<div class="card">
+			<h3>Чекер стиля</h3>
+			<p>PowerShell-скрипт проверяет один выход, длину тела функции, запрет <code>Прервать</code>, <code>Продолжить</code>, <code>Перейти</code>, <code>Пока</code> и <code>Сообщить()</code>.</p>
+		</div>
+	</div>
+
+	<h2 id="style"><span class="num">03</span>Стиль кода</h2>
+	<p class="note">Один выход из функции, тело в одну-две инструкции, никаких <code>Прервать</code>, <code>Продолжить</code>, <code>Перейти</code>, <code>Пока</code>.</p>
+
+	<pre><span class="c">// Каждое обращение к платформе — отдельная однооператорная функция</span>
+<span class="k">Функция</span> ТекущиеНастройки()
+
+	<span class="k">Возврат</span> КомпоновщикНастроек.ПолучитьНастройки();
+
+<span class="k">КонецФункции</span>
+
+<span class="k">Функция</span> ЗначениеПоУмолчанию(ТекущееЗначение, Значение)
+
+	<span class="k">Возврат</span> ?(ЗначениеЗаполнено(ТекущееЗначение), ТекущееЗначение, Значение);
+
+<span class="k">КонецФункции</span></pre>
+
+	<table class="rules">
+		<tr><th>Правило</th><th>Как проверяется</th></tr>
+		<tr><td>Ровно один <code>Возврат</code>, и только последней инструкцией</td><td>подсчёт инструкций в теле функции</td></tr>
+		<tr><td>В процедурах <code>Возврат</code> запрещён</td><td>разбор вида рутины</td></tr>
+		<tr><td>Тело функции 1–2 инструкции</td><td>предупреждение после 2, ошибка после 4</td></tr>
+		<tr><td>Запрещены <code>Прервать</code>, <code>Продолжить</code>, <code>Перейти</code>, <code>Пока</code></td><td>поиск по целым словам</td></tr>
+		<tr><td>Отступ — табуляцией, <code>Сообщить()</code> — нельзя</td><td>регулярные выражения</td></tr>
+	</table>
+	<p class="caption">Текущий прогон: 2 файла, 0 ошибок, 0 предупреждений.</p>
+
+	<h2 id="build"><span class="num">04</span>Сборка</h2>
+	<ol class="steps">
+		<li><code>Файл → Новый → Внешний отчёт</code>, открыть схему компоновки данных.</li>
+		<li>Вставить запрос из <code>src/Запрос.txt</code> в набор данных.</li>
+		<li>Добавить ресурсы <code>Сумма()</code>, вычисляемое поле <code>Контроль</code>, параметры периода.</li>
+		<li>Настроить структуру <code>Склад → Номенклатура → Характеристика</code> и условное оформление.</li>
+		<li>Вставить модуль объекта из <code>src/МодульОбъекта.bsl</code>, сохранить <code>.erf</code>, сформировать.</li>
+	</ol>
+
+	<div class="actions" style="margin-top:18px;">
+		<a class="btn primary" href="https://github.com/kepanasyuke/1c-report-demo">Репозиторий</a>
+		<a class="btn" href="https://github.com/kepanasyuke/1c-report-demo/blob/master/README.md">README</a>
+		<a class="btn" href="https://github.com/kepanasyuke/1c-report-demo/blob/master/src/%D0%A1%D1%85%D0%B5%D0%BC%D0%B0%D0%A1%D0%9A%D0%94.md">Чек-лист схемы</a>
+	</div>
+
+</main>
+
+<footer>
+	<div class="wrap">
+		<span>Демо-отчёт на СКД · 1С:Предприятие 8.3</span>
+		<span class="sp"><a href="https://github.com/kepanasyuke/1c-report-demo">github.com/kepanasyuke/1c-report-demo</a></span>
+	</div>
+</footer>
+
+</body>
+</html>
