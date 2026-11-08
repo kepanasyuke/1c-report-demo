@@ -1,10 +1,18 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ведомость по товарам на складах — демо-отчёт на СКД (1С 8.3.10)</title>
 <meta name="description" content="Демонстрационный отчёт 1С на СКД: ведомость по товарам на складах с контролем периода. Код в строгом стиле, чекер правил оформления, интерфейс 8.3.10 «Такси».">
+<meta name="theme-color" content="#f0f0f0">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23ffe9a8' stroke='%23b9b9b9'/%3E%3Ctext x='16' y='22' font-size='15' font-family='Arial' text-anchor='middle' fill='%231a1a1a'%3E1C%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ведомость по товарам на складах — демо-отчёт на СКД">
+<meta property="og:description" content="Отчёт 1С на СКД: остатки, приход, расход и контрольная колонка. Код в строгом стиле, интерфейс 8.3.10 «Такси».">
+<meta property="og:url" content="https://kepanasyuke.github.io/1c-report-demo/">
+<meta property="og:image" content="https://kepanasyuke.github.io/1c-report-demo/screens/01-otchet-taksi-8-3-10.png">
+<meta name="twitter:card" content="summary_large_image">
 <style>
 	:root {
 		--ink: #1a1a1a;
@@ -26,6 +34,7 @@
 	a { color: var(--accent); text-decoration: none; }
 	a:hover { text-decoration: underline; }
 	.wrap { max-width: 1160px; margin: 0 auto; padding: 0 20px; }
+	:target { scroll-margin-top: 64px; }
 
 	header.top {
 		background: linear-gradient(#fbfbfb, #ebebeb);
@@ -45,6 +54,7 @@
 	.badge {
 		font-size: 12.5px; padding: 3px 10px; border: 1px solid var(--line);
 		border-radius: 2px; background: #fdfdfd; color: #444;
+		max-width: 100%; overflow-wrap: anywhere;
 	}
 	.actions { display: flex; gap: 10px; flex-wrap: wrap; }
 	.btn {
@@ -79,7 +89,8 @@
 	pre .k { color: #0033b3; }
 	pre .s { color: #a31515; }
 
-	table.rules { width: 100%; border-collapse: collapse; font-size: 14px; }
+	.tablewrap { overflow-x: auto; margin-bottom: 8px; }
+	table.rules { width: 100%; min-width: 620px; border-collapse: collapse; font-size: 14px; }
 	table.rules td, table.rules th { border: 1px solid var(--line); padding: 7px 10px; text-align: left; }
 	table.rules th { background: var(--panel); font-weight: 600; }
 
@@ -92,6 +103,19 @@
 	}
 	footer .wrap { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
 	footer .sp { margin-left: auto; }
+
+	@media (max-width: 760px) {
+		header.top .wrap { height: auto; padding: 8px 16px; flex-wrap: wrap; gap: 6px; }
+		.logo { font-size: 14px; }
+		nav { margin-left: 0; gap: 12px; font-size: 13px; }
+		.hero { padding: 30px 0 24px; }
+		.hero h1 { font-size: 24px; }
+		.hero p.lead { font-size: 15.5px; }
+		h2 { font-size: 19px; margin: 32px 0 12px; }
+		.btn { height: 34px; padding: 0 12px; font-size: 13px; }
+		.card, .caption, .note { font-size: 13.5px; }
+		footer .sp { margin-left: 0; }
+	}
 </style>
 </head>
 <body>
@@ -139,10 +163,10 @@
 		Данные вымышленные: это макет, а не снимок живой базы.
 	</p>
 
-	<div class="shot"><img src="screens/01-otchet-taksi-8-3-10.png" alt="Сформированный отчёт в интерфейсе 1С 8.3.10 Такси"></div>
+	<div class="shot"><img src="screens/01-otchet-taksi-8-3-10.png" width="1400" height="900" loading="eager" decoding="async" alt="Сформированный отчёт в интерфейсе 1С 8.3.10 Такси"></div>
 	<p class="caption">Сформированный отчёт: группировки «Склад → Номенклатура → Характеристика», итоги по складам и общий.</p>
 
-	<div class="shot"><img src="screens/02-nastroyki-taksi-8-3-10.png" alt="Панель настроек СКД: структура, отбор, параметры периода"></div>
+	<div class="shot"><img src="screens/02-nastroyki-taksi-8-3-10.png" width="1400" height="900" loading="lazy" decoding="async" alt="Панель настроек СКД: структура, отбор, параметры периода"></div>
 	<p class="caption">Панель «Настройки»: структура группировок, отбор по складу, параметры периода.</p>
 
 	<h2 id="inside"><span class="num">02</span>Что внутри</h2>
@@ -181,6 +205,7 @@
 
 <span class="k">КонецФункции</span></pre>
 
+	<div class="tablewrap">
 	<table class="rules">
 		<tr><th>Правило</th><th>Как проверяется</th></tr>
 		<tr><td>Ровно один <code>Возврат</code>, и только последней инструкцией</td><td>подсчёт инструкций в теле функции</td></tr>
@@ -189,6 +214,7 @@
 		<tr><td>Запрещены <code>Прервать</code>, <code>Продолжить</code>, <code>Перейти</code>, <code>Пока</code></td><td>поиск по целым словам</td></tr>
 		<tr><td>Отступ — табуляцией, <code>Сообщить()</code> — нельзя</td><td>регулярные выражения</td></tr>
 	</table>
+	</div>
 	<p class="caption">Текущий прогон: 2 файла, 0 ошибок, 0 предупреждений.</p>
 
 	<h2 id="build"><span class="num">04</span>Сборка</h2>
