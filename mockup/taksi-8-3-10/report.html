@@ -1,0 +1,186 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>Ведомость по товарам на складах — 1С 8.3.10 Такси</title>
+<style>
+	* { box-sizing: border-box; }
+	html, body { margin: 0; padding: 0; }
+	body {
+		width: 1400px; height: 900px;
+		background: #ffffff;
+		font: 13px/1.25 "Segoe UI", Tahoma, Arial, sans-serif;
+		color: #000000;
+		-webkit-font-smoothing: antialiased;
+	}
+	.window {
+		width: 1400px; height: 900px;
+		border: 1px solid #7a7a7a;
+		background: #ffffff;
+		display: flex; flex-direction: column;
+	}
+	.caption {
+		height: 30px; flex: 0 0 30px;
+		background: #f0f0f0;
+		border-bottom: 1px solid #d8d8d8;
+		display: flex; align-items: center;
+		padding: 0 8px;
+	}
+	.caption .icon {
+		width: 16px; height: 16px; margin-right: 8px;
+		border: 1px solid #b9b9b9; background: #ffe9a8;
+		border-radius: 2px;
+	}
+	.caption .title { font-size: 13px; color: #1a1a1a; }
+	.caption .buttons { margin-left: auto; display: flex; gap: 2px; }
+	.caption .buttons span {
+		width: 30px; height: 22px; display: flex; align-items: center; justify-content: center;
+		font-size: 12px; color: #555; border: 1px solid transparent;
+	}
+	.caption .buttons span.close { color: #b00000; }
+
+	.commandbar {
+		height: 42px; flex: 0 0 42px;
+		background: linear-gradient(#fbfbfb, #ebebeb);
+		border-bottom: 1px solid #c9c9c9;
+		display: flex; align-items: center;
+		padding: 0 8px; gap: 6px;
+	}
+	.btn {
+		height: 26px; padding: 0 12px;
+		display: inline-flex; align-items: center;
+		background: linear-gradient(#fdfdfd, #ebebeb);
+		border: 1px solid #bfbfbf; border-radius: 2px;
+		font-size: 13px; color: #000;
+	}
+	.btn.primary { border-color: #a8a8a8; }
+	.btn .caret { margin-left: 7px; font-size: 9px; color: #666; }
+	.sep { width: 1px; height: 26px; background: #cfcfcf; margin: 0 4px; }
+	.spacer { flex: 1; }
+
+	.content { flex: 1; display: flex; background: #ffffff; overflow: hidden; }
+
+	.sheet { flex: 1; background: #ffffff; padding: 0; }
+	table.grid { border-collapse: collapse; table-layout: fixed; }
+	table.grid td, table.grid th {
+		border: 1px solid #c9c9c9;
+		height: 24px; padding: 2px 6px;
+		font-size: 13px; vertical-align: middle;
+		white-space: nowrap; overflow: hidden;
+	}
+	table.grid th {
+		font-weight: bold; background: #ffffff; text-align: left;
+	}
+	table.grid th.num { text-align: center; }
+	table.grid td.num { text-align: right; font-variant-numeric: tabular-nums; }
+	table.grid td.group { font-weight: bold; background: #ffffff; }
+	table.grid td.total { font-weight: bold; }
+	table.grid td.neg { color: #c00000; }
+	table.grid tr.empty td { border-top: 1px solid #c9c9c9; background: #fff; color: #999; }
+	.w1 { width: 200px; } .w2 { width: 382px; } .w3 { width: 180px; }
+	.w4 { width: 135px; } .w5 { width: 130px; } .w6 { width: 120px; }
+	.w7 { width: 140px; } .w8 { width: 95px; }
+	.hint { padding: 10px 12px; color: #666; font-size: 12px; }
+</style>
+</head>
+<body>
+<div class="window">
+
+	<div class="caption">
+		<div class="icon"></div>
+		<div class="title">Ведомость по товарам на складах с контролем периода</div>
+		<div class="buttons"><span>—</span><span>▢</span><span class="close">✕</span></div>
+	</div>
+
+	<div class="commandbar">
+		<span class="btn primary">Сформировать</span>
+		<span class="btn">Настройки</span>
+		<span class="btn">Выбрать вариант<span class="caret">▼</span></span>
+		<span class="sep"></span>
+		<span class="btn">Сохранить<span class="caret">▼</span></span>
+		<span class="btn">Печать<span class="caret">▼</span></span>
+		<span class="spacer"></span>
+		<span class="btn">?</span>
+	</div>
+
+	<div class="content">
+		<div class="sheet">
+			<table class="grid">
+				<colgroup>
+					<col class="w1"><col class="w2"><col class="w3"><col class="w4">
+					<col class="w5"><col class="w6"><col class="w7"><col class="w8">
+				</colgroup>
+				<tr>
+					<th>Склад</th>
+					<th>Номенклатура</th>
+					<th>Характеристика</th>
+					<th class="num">Начальный остаток</th>
+					<th class="num">Приход</th>
+					<th class="num">Расход</th>
+					<th class="num">Конечный остаток</th>
+					<th class="num">Контроль</th>
+				</tr>
+
+				<tr><td class="group" colspan="8">Склад №1 (основной)</td></tr>
+				<tr>
+					<td></td><td>Саморез 4,2х75, уп. 100 шт</td><td>&nbsp;</td>
+					<td class="num">1 200,000</td><td class="num">400,000</td><td class="num">350,000</td>
+					<td class="num">1 250,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td>Утеплитель «Роквул Лайт Баттс», 100 мм</td><td>Плита 1200х600</td>
+					<td class="num">0,000</td><td class="num">8,000</td><td class="num">8,000</td>
+					<td class="num">0,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td>Краска фасадная Tikkurila, 9 л</td><td>&nbsp;</td>
+					<td class="num">12,000</td><td class="num">0,000</td><td class="num">3,000</td>
+					<td class="num">9,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td>Плёнка пароизоляционная, 70 м²</td><td>&nbsp;</td>
+					<td class="num">0,000</td><td class="num">0,000</td><td class="num">2,000</td>
+					<td class="num neg">−2,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td class="total">Итого</td><td></td>
+					<td class="num total">1 212,000</td><td class="num total">408,000</td><td class="num total">363,000</td>
+					<td class="num total">1 257,000</td><td class="num total">0,000</td>
+				</tr>
+
+				<tr><td class="group" colspan="8">Склад №2 (участок Север)</td></tr>
+				<tr>
+					<td></td><td>Саморез 4,2х75, уп. 100 шт</td><td>&nbsp;</td>
+					<td class="num">3 400,000</td><td class="num">0,000</td><td class="num">3 400,000</td>
+					<td class="num">0,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td>Профиль ПН-2 50/40, 3 м</td><td>&nbsp;</td>
+					<td class="num">650,000</td><td class="num">1 200,000</td><td class="num">870,000</td>
+					<td class="num">980,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td>Грунтовка глубокого проникновения, 10 л</td><td>&nbsp;</td>
+					<td class="num">48,000</td><td class="num">60,000</td><td class="num">96,000</td>
+					<td class="num">12,000</td><td class="num">0,000</td>
+				</tr>
+				<tr>
+					<td></td><td class="total">Итого</td><td></td>
+					<td class="num total">4 098,000</td><td class="num total">1 260,000</td><td class="num total">4 366,000</td>
+					<td class="num total">992,000</td><td class="num total">0,000</td>
+				</tr>
+
+				<tr><td class="group" colspan="8">Итого</td></tr>
+				<tr>
+					<td></td><td class="total">Всего</td><td></td>
+					<td class="num total">5 310,000</td><td class="num total">1 668,000</td><td class="num total">4 729,000</td>
+					<td class="num total">2 249,000</td><td class="num total">0,000</td>
+				</tr>
+			</table>
+			<div class="hint">Период: 01.11.2026 — 30.11.2026. Строка с отрицательным конечным остатком выделена условным оформлением.</div>
+		</div>
+	</div>
+
+</div>
+</body>
+</html>
