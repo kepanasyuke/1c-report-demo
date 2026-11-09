@@ -80,6 +80,28 @@
 	.card p { margin: 0; font-size: 13.5px; color: var(--muted); }
 	.card code { font-size: 12.5px; }
 
+	.portfolio { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; margin-bottom: 10px; }
+	.pcard {
+		border: 1px solid var(--line); border-radius: 3px; background: #fff;
+		display: flex; flex-direction: column; overflow: hidden;
+	}
+	.pcard .cover {
+		display: block; height: 180px; overflow: hidden;
+		background: #fafafa; border-bottom: 1px solid #e6e6e6;
+	}
+	.pcard .cover img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; }
+	.pcard .cover.code { display: flex; align-items: center; padding: 14px; }
+	.pcard .cover.code pre {
+		margin: 0; width: 100%; padding: 10px 12px; overflow: hidden;
+		font-size: 11.5px; line-height: 1.5; background: #fff; border: 1px solid #e4e4e4;
+	}
+	.pcard .body { padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 9px; flex: 1; }
+	.pcard h3 { margin: 0; font-size: 15.5px; }
+	.pcard p { margin: 0; font-size: 13.5px; color: var(--muted); flex: 1; }
+	.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+	.tag { font-size: 11.5px; padding: 1px 8px; border: 1px solid #dcdcdc; border-radius: 2px; color: #555; background: #fbfbfb; }
+	.pcard .go { font-size: 13.5px; }
+
 	pre {
 		margin: 0 0 20px; padding: 14px 16px; overflow: auto;
 		background: #fbfbfb; border: 1px solid #e0e0e0; border-radius: 3px;
@@ -124,6 +146,7 @@
 	<div class="wrap">
 		<span class="logo"><i></i>Ведомость по товарам на складах</span>
 		<nav>
+			<a href="#portfolio">Портфолио</a>
 			<a href="#shots">Скрины</a>
 			<a href="#inside">Что внутри</a>
 			<a href="#style">Стиль кода</a>
@@ -156,7 +179,62 @@
 		</div>
 	</section>
 
-	<h2 id="shots"><span class="num">01</span>Как это выглядит</h2>
+	<h2 id="portfolio"><span class="num">01</span>Портфолио</h2>
+	<p class="note">Работы из этого репозитория: у каждой есть исходники и результат, который можно открыть и проверить.</p>
+
+	<div class="portfolio">
+
+		<article class="pcard">
+			<a class="cover" href="screens/01-otchet-taksi-8-3-10.png">
+				<img src="screens/cover-otchet.png" width="1400" height="430" loading="eager" decoding="async" alt="Отчёт «Ведомость по товарам на складах» в интерфейсе 1С 8.3.10">
+			</a>
+			<div class="body">
+				<h3>Ведомость по товарам на складах</h3>
+				<p>Отчёт на СКД: остатки, приход, расход и контрольная колонка, которая обязана быть нулевой. Ручная компоновка, параметры периода, условное оформление минуса.</p>
+				<div class="tags"><span class="tag">СКД</span><span class="tag">Отчёт</span><span class="tag">ОстаткиИОбороты</span></div>
+				<a class="go" href="#shots">Скрины и код →</a>
+			</div>
+		</article>
+
+		<article class="pcard">
+			<div class="cover code">
+				<pre>{
+  "method": "POST",
+  "resource": "/api/orders",
+  "body": {
+    "id": 1024,
+    "sum": 8400.00
+  }
+}</pre>
+			</div>
+			<div class="body">
+				<h3>Обмен с внешним сервисом по JSON</h3>
+				<p>Модуль на HTTPСоединение и ЗаписьJSON/ЧтениеJSON: заголовки, тело запроса, проверка кода состояния, разбор ответа — в том же стиле мелких функций.</p>
+				<div class="tags"><span class="tag">HTTP</span><span class="tag">JSON</span><span class="tag">Интеграция</span></div>
+				<a class="go" href="https://github.com/kepanasyuke/1c-report-demo/tree/master/src">Исходник →</a>
+			</div>
+		</article>
+
+		<article class="pcard">
+			<div class="cover code">
+				<pre>Проверено файлов: 2
+Ошибок: 0, предупреждений: 0
+
+Возврат  — ровно один, в конце
+тело     — 1-2 инструкции
+Прервать, Продолжить, Пока  —  нет</pre>
+			</div>
+			<div class="body">
+				<h3>Чекер правил оформления BSL</h3>
+				<p>PowerShell-скрипт, который проверяет один выход из функции, длину тела, запрет Прервать / Продолжить / Перейти / Пока и команды Сообщить.</p>
+				<div class="tags"><span class="tag">PowerShell</span><span class="tag">BSL</span><span class="tag">Code review</span></div>
+				<a class="go" href="https://github.com/kepanasyuke/1c-report-demo/tree/master/tools">Исходник →</a>
+			</div>
+		</article>
+
+	</div>
+
+	<h2 id="shots"><span class="num">02</span>Как это выглядит</h2>
 	<p class="note">
 		Макеты интерфейса 8.3.10 «Такси»: плоские кнопки командной панели, серая шапка,
 		тонкие рамки таблицы 1 px, жирные строки группировок и итогов, минусовой остаток — красным.
@@ -169,7 +247,7 @@
 	<div class="shot"><img src="screens/02-nastroyki-taksi-8-3-10.png" width="1400" height="900" loading="lazy" decoding="async" alt="Панель настроек СКД: структура, отбор, параметры периода"></div>
 	<p class="caption">Панель «Настройки»: структура группировок, отбор по складу, параметры периода.</p>
 
-	<h2 id="inside"><span class="num">02</span>Что внутри</h2>
+	<h2 id="inside"><span class="num">03</span>Что внутри</h2>
 	<div class="grid">
 		<div class="card">
 			<h3>Запрос</h3>
@@ -189,7 +267,7 @@
 		</div>
 	</div>
 
-	<h2 id="style"><span class="num">03</span>Стиль кода</h2>
+	<h2 id="style"><span class="num">04</span>Стиль кода</h2>
 	<p class="note">Один выход из функции, тело в одну-две инструкции, никаких <code>Прервать</code>, <code>Продолжить</code>, <code>Перейти</code>, <code>Пока</code>.</p>
 
 	<pre><span class="c">// Каждое обращение к платформе — отдельная однооператорная функция</span>
@@ -217,7 +295,7 @@
 	</div>
 	<p class="caption">Текущий прогон: 2 файла, 0 ошибок, 0 предупреждений.</p>
 
-	<h2 id="build"><span class="num">04</span>Сборка</h2>
+	<h2 id="build"><span class="num">05</span>Сборка</h2>
 	<ol class="steps">
 		<li><code>Файл → Новый → Внешний отчёт</code>, открыть схему компоновки данных.</li>
 		<li>Вставить запрос из <code>src/Запрос.txt</code> в набор данных.</li>
